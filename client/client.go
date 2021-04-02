@@ -97,6 +97,11 @@ func main() {
 		}
 	}()
 
+	time.Sleep(90*time.Second) //*time.Minute)
+	log.Println("----- in MAIN every one shutdown..")
+	cancel()
+	log.Println("----- in MAIN 2..")
+
 	wg.Wait()
 	log.Println("The END")
 }

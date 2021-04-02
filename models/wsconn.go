@@ -75,8 +75,10 @@ func (cc *clientConn) retryConnection(ctx context.Context, loc string) error {
 	for {
 		select {
 		case <- ctx.Done():
+			cc.connectedChannel <- struct{}{}
 			return fmt.Errorf("%s context canceled ", method)
 		case <-cc.done:
+			cc.connectedChannel <- struct{}{}
 			return fmt.Errorf("%s interrupted..", method)
 		default:
 			c, _, connErr := websocket.DefaultDialer.Dial(cc.url, cc.headers)
@@ -146,7 +148,7 @@ func (cc *clientConn) WriteMessage(ctx context.Context, messageType int, data []
 		<-cc.connectedChannel
 	}
 	if cc.status != connected {
-		return fmt.Errorf("Connection has issue!!! bailed out")
+		return fmt.Errorf("Connection has issue!!! bailed out, status=%s", cc.status)
 	}
 	if cc.wsConn != nil {
 		err := cc.wsConn.WriteMessage(messageType, data)
