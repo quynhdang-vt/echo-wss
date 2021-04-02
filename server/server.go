@@ -1,8 +1,8 @@
-
 package main
 
 import (
 	"flag"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -28,7 +28,9 @@ func echo(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 		log.Printf("recv: %s", message)
-		err = c.WriteMessage(mt, message)
+		// change message to have server
+		svrMessage := fmt.Sprintf("[server]: Hello %s", string(message))
+		err = c.WriteMessage(mt, []byte(svrMessage))
 		if err != nil {
 			log.Println("write:", err)
 			break
